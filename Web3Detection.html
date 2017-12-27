@@ -1,0 +1,89 @@
+<!<!DOCTYPE html>
+<html>
+<head>
+    <script src="./scripts/angularv1.6.4.min.js"></script>
+
+    <script src="./scripts/ethereumjs-util.js"></script>
+    <script src="./scripts/ethereumjs-ABI.js"></script>
+    <script src="./scripts/bignumber.js"></script>
+    <script src="./scripts/bn.js"></script> 
+    <script src="scripts/underscore-min.js"></script>
+</head>
+<!-- defining angular app -->
+<body ng-app="DexTester">
+    <script>
+            var myWeb3;
+            function getWeb3(callback) {
+                if (typeof window.web3 === 'undefined') {
+                    // no web3, use fallback
+                    console.error("Please use a web3 browser");
+                    document.getElementById("nometamask").style.display = "block";
+                } else {
+                    // window.web3 == web3 most of the time. Don't override the provided,
+                    // web3, just wrap it in your Web3.
+                    myWeb3 = new Web3(window.web3.currentProvider); 
+
+                    // the default account doesn't seem to be persisted, copy it to our
+                    // new instance
+                    myWeb3.eth.defaultAccount = window.web3.eth.defaultAccount;
+
+                    callback(myWeb3);
+                }
+            }
+
+            window.addEventListener('load', function() {
+                getWeb3(startApp);
+            });
+            
+            function startApp(web3) {
+                
+                web3.version.getNetwork((err, netId) => {
+                    document.getElementById("lblNetwork").innerText = netId;
+                    switch (netId) {
+                        case "1":
+                        console.log('This is mainnet');
+                        document.getElementById("mainnetwork").style.display = "block";
+                        break
+                        case "2":
+                        console.log('This is the deprecated Morden test network.');
+                        break
+                        case "3":
+                        console.log('This is the ropsten test network.');
+                        document.getElementById("ropstennetwork").style.display = "block";
+                        break
+                        default:
+                        console.log('This is an unknown network.');
+                    }
+                });
+
+                if(netId == 1)
+                {
+                    // Continue with the App Functionality
+                }
+
+            }
+
+    </script>
+    <div ng-controller="DexController">
+        <h2>The Dex Tester</h2>
+        <h1>Natework Connected : <label id="lblNetwork" /></h1>
+
+        <div id="nometamask" style="display:none;">
+                <h2>Use Web3 Browser or any browser with Meta Mask Installed</h2>
+        </div>
+
+        <div id="ropstennetwork" style="display:none;">
+                <h2>Oops, you're on the wrong network</h2>
+                <h3>
+                    Simply open MetaMask and switch over to the <b>Main Ethereum Network.</b><br/>
+                </h3>
+            <img src="https://www.cryptokitties.co/images/main-network.png" />
+        </div>
+
+        <div id="mainnetwork" style="display:none;">
+                <h2>You are in main network</h2>
+        </div>
+
+    </div>
+</body>
+</html>

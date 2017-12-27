@@ -1,0 +1,54 @@
+<!<!DOCTYPE html>
+<html>
+<head>
+    <script src="./scripts/angularv1.6.4.min.js"></script>
+
+    <script src="./scripts/ethereumjs-util.js"></script>
+    <script src="./scripts/ethereumjs-ABI.js"></script>
+    <script src="./scripts/bignumber.js"></script>
+    <script src="./scripts/bn.js"></script> 
+    <script src="scripts/underscore-min.js"></script>
+</head>
+<!-- defining angular app -->
+<body ng-app="DexTester">
+    <script>
+
+            web3 = new Web3(web3.currentProvider);
+
+            var accountAddress = "0xC4f3BFE7D69461B7f363509393D44357c084404c";
+
+            var dexABI = [{"constant":true,"inputs":[],"name":"get","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_from","type":"address"},{"indexed":false,"name":"_x","type":"uint256"}],"name":"SetEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_from","type":"address"},{"indexed":false,"name":"_x","type":"uint256"},{"indexed":false,"name":"_contract","type":"address"}],"name":"WriteEvent","type":"event"},{"constant":false,"inputs":[{"name":"x","type":"uint256"}],"name":"set","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}];
+            var dexContractAddr = '0x757bbf3c80c17b76db31ad38dc1b51e37c04d64c';
+            var dexContract = web3.eth.contract(dexABI);
+            var instanceDexContract = dexContract.at(dexContractAddr);
+
+            // watch for changes
+            var myEvent = instanceDexContract.SetEvent({}, {fromBlock: 2294155 , toBlock: 'latest'});
+
+            console.log("Start watching events"); 
+            myEvent.watch(function(error, result){
+                if (!error) {
+                    console.log(result);
+                } else {
+                    console.log(error);  
+                }
+            });
+
+            // Send a transaction to call Set
+            console.log("set(10)"); 
+            instanceDexContract.set(10, {from: accountAddress}, function(err, result){ console.log(result); });
+
+            console.log("set(20)"); 
+            instanceDexContract.set(20, {from: accountAddress}, function(err, result){ console.log(result); });
+
+            //Angular
+            var app = angular.module("DexTester", []);
+            app.controller("DexController", function ($scope, $window) {
+
+            });
+    </script>
+    <div ng-controller="DexController">
+        <h2>The Dex Tester</h2>
+    </div>
+</body>
+</html>

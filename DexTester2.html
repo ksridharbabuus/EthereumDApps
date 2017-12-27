@@ -1,0 +1,172 @@
+<!<!DOCTYPE html>
+<html>
+<head>
+    <script src="./scripts/angularv1.6.4.min.js"></script>
+
+    <script src="./scripts/ethereumjs-util.js"></script>
+    <script src="./scripts/ethereumjs-ABI.js"></script>
+    <script src="./scripts/bignumber.js"></script>
+    <script src="./scripts/bn.js"></script> 
+    <script src="scripts/underscore-min.js"></script>
+</head>
+<!-- defining angular app -->
+<body ng-app="DexTester">
+    <script>
+            function toBaseUnitAmount(amount, decimals) {
+                var unit = new BigNumber(10).pow(decimals);
+                var baseUnitAmount = amount.times(unit);
+                return baseUnitAmount;
+            };
+
+            function bigNumberToBN(value) {
+                return new BN(value.toString(), 10);
+            }
+            
+            function getSolEncodedValue(value) {
+                var baseValue = toBaseUnitAmount(value, 18);
+                return bigNumberToBN(baseValue);
+            }
+
+            /* Sample Data */
+            /*
+            var _sellerTokens = ['0xC915F31786F1c4EB40f653dd88f505AFD9DFbfa1', '0xc8f5bBF1aB4493d1bca2D574259247281f0a7A72', '0xc8f5bBF1aB4493d1bca2D574259247281f0a7A72'];
+            var _buyerTokens = ['0xC915F31786F1c4EB40f653dd88f505AFD9DFbfa1', '0xc8f5bBF1aB4493d1bca2D574259247281f0a7A72'];
+            var _sellerValues = [2, 4, 1];
+            var _buyerValues = [2, 4, ];
+            var _orderAddresses = ['0xaB8AFa0900D5D4180B941b2Dd05b6D9413Fff207', '0xaB8AFa0900D5D4180B941b2Dd05b6D9413Fff207', '0xaB8AFa0900D5D4180B941b2Dd05b6D9413Fff207', '0x7162D44D35C718F02A989Daf111085a16AB88736', '0xc8f5bBF1aB4493d1bca2D574259247281f0a7A72'];
+            var _orderValues = [25000, 30000, 1542857567, 965934235];*/
+
+            var _sellerTokens = ['0x7354b4cea1cb8188a290b857132cd1214bd1cbbc'];
+            var _buyerTokens = ['0xC8f0C992660666B64596c452fC0e7e6b07a448c2'];
+            var _sellerValues = [20000000000000000000];
+            var _buyerValues = [10000000000000000000];
+            var _orderAddresses = ['0xf3E9b2e4bE5010fa7F4c1356417e3D43Be488df7', '0x46EF7d49aaA68B29C227442BDbD18356415f8304', '0xbaab5cac3c8ada9f04d987aaeb4267a4d3f692f1', '0x2c94bba009e0133f5944fa25944edc44427db790', '0x7354b4cea1cb8188a290b857132cd1214bd1cbbc'];
+            //Dinesh Seller address - > 0xbaab5cac3c8ada9f04d987aaeb4267a4d3f692f1
+            //Dinesh buyer address - > 0x377cf5Ee08c4617A30683e2ACa37f43d05732700
+            var _orderValues = [20000000000000000000, 10000000000000000000, 1542998564, 965934235];
+            /**************/
+
+            web3 = new Web3(web3.currentProvider);
+
+            var dexABI = [{ "constant": false, "inputs": [], "name": "closeExchange", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "exLastActionTime", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "approver", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_wallet", "type": "address" }, { "name": "_verifierAddr", "type": "address" }, { "name": "_feeCalculator", "type": "address" }], "name": "updateExConfig", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "_startTime", "type": "uint256" }], "name": "startExchange", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "HaltExchange", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "appIntegrator", "type": "address" }], "name": "addAuthorizedAddress", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "_msgHash", "type": "bytes32" }, { "name": "v", "type": "uint8" }, { "name": "r", "type": "bytes32" }, { "name": "s", "type": "bytes32" }, { "name": "_signer", "type": "address" }], "name": "isOrderSigned", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "wallet", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "version", "outputs": [{ "name": "", "type": "bytes32" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "histroyVaults", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "appIntegrator", "type": "address" }], "name": "removeAuthorizedAddress", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "_sellerTokens", "type": "address[]" }, { "name": "_buyerTokens", "type": "address[]" }, { "name": "_sellerValues", "type": "uint256[]" }, { "name": "_buyerValues", "type": "uint256[]" }, { "name": "_orderAddresses", "type": "address[5]" }, { "name": "_orderValues", "type": "uint256[4]" }, { "name": "v", "type": "uint8" }, { "name": "r", "type": "bytes32" }, { "name": "s", "type": "bytes32" }, { "name": "_hash", "type": "bytes32" }], "name": "fulfillPO", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "integrators", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "owner", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "released", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "etherToken", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "authorized", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "activeVaultAddr", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "baseToken", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "exStatus", "outputs": [{ "name": "", "type": "uint8" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "feeCalculatorAddr", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "KillExchange", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "_sellerTokens", "type": "address[]" }, { "name": "_buyerTokens", "type": "address[]" }, { "name": "_sellerValues", "type": "uint256[]" }, { "name": "_buyerValues", "type": "uint256[]" }, { "name": "_orderAddresses", "type": "address[5]" }, { "name": "_orderValues", "type": "uint256[4]" }], "name": "getOrderHash", "outputs": [{ "name": "", "type": "bytes32" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getAuthorizedAddresses", "outputs": [{ "name": "", "type": "address[]" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_vault", "type": "address" }], "name": "updateVault", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "_msgHash", "type": "bytes32" }, { "name": "v", "type": "uint8" }, { "name": "r", "type": "bytes32" }, { "name": "s", "type": "bytes32" }], "name": "recoverSignerAddr", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [{ "name": "_vault", "type": "address" }, { "name": "_feeCalculator", "type": "address" }, { "name": "_baseToken", "type": "address" }, { "name": "_etherToken", "type": "address" }, { "name": "_verifierAddr", "type": "address" }], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "POHash", "type": "bytes32" }, { "indexed": false, "name": "expiryTimeStamp", "type": "uint256" }], "name": "POExpired", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "name": "token", "type": "address" }, { "indexed": false, "name": "holder", "type": "address" }], "name": "ExchangeNotAuthorized", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "name": "signer", "type": "address" }, { "indexed": false, "name": "IsValidSignature", "type": "bool" }], "name": "SingatureValidated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "errorId", "type": "uint8" }, { "indexed": true, "name": "poHash", "type": "bytes32" }], "name": "LogError", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "name": "maker", "type": "address" }, { "indexed": true, "name": "seller", "type": "address" }, { "indexed": true, "name": "buyer", "type": "address" }, { "indexed": false, "name": "poHash", "type": "bytes32" }], "name": "OrderFilled", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "target", "type": "address" }, { "indexed": true, "name": "caller", "type": "address" }], "name": "LogAuthorizedAddressAdded", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "target", "type": "address" }, { "indexed": true, "name": "caller", "type": "address" }], "name": "LogAuthorizedAddressRemoved", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "oldApprover", "type": "address" }, { "indexed": true, "name": "newApprover", "type": "address" }], "name": "LogApproverChanged", "type": "event" }];
+            var dexContractAddr = '0x81649b2558a59bbc9716adec9c81007e8d643aa1';
+            var dexContract = web3.eth.contract(dexABI);
+            var instanceDexContract = dexContract.at(dexContractAddr);
+
+            var orderHash = "";
+            function parseSignatureAsVRS(signature) {
+                var _a = ehUtil.Util.toBuffer(signature);
+                var v = _a[0];
+                if (v < 27) {
+                    v += 27;
+                }
+                var r = _a.slice(1, 33);
+                var s = _a.slice(33, 65);
+                var ecSignature = {
+                    v: v,
+                    r: ehUtil.Util.bufferToHex(r),
+                    s: ehUtil.Util.bufferToHex(s),
+                };
+                return ecSignature;
+            }
+
+            function parseSignatureAsRSV(signature) {
+                var _a = ehUtil.Util.fromRpcSig(signature), v = _a.v, r = _a.r, s = _a.s;
+                var ecSignature = {
+                    v: v,
+                    r: ehUtil.Util.bufferToHex(r),
+                    s: ehUtil.Util.bufferToHex(s),
+                };
+                return ecSignature;
+            }
+
+            function extractECSignature(sign) {
+                // Parse the signature in RSV way
+                var ecSignature = parseSignatureAsRSV(sign);
+                if (!isValidSignature(ecSignature)) {
+                    // Parse the signature in VRS way
+                    ecSignature = parseSignatureAsVRS(signature);
+                    if (!isValidSignature(ecSignature)) {
+                        return null;
+                    }
+                }
+                return ecSignature;
+            }
+
+            function isValidSignature(ecSignature) {
+                var msgBuf = ehUtil.Util.toBuffer(orderHash);
+                var v = ecSignature.v;
+                var rBuf = ehUtil.Util.toBuffer(ecSignature.r);
+                var sBuf = ehUtil.Util.toBuffer(ecSignature.s);
+                var pubKeyBuff = ehUtil.Util.ecrecover(msgBuf, v, rBuf, sBuf);
+                var pubAddBuf = ehUtil.Util.pubToAddress(pubKeyBuff);
+
+                var addrRetrieved = ehUtil.Util.bufferToHex(pubAddBuf);
+                return web3.eth.coinbase == addrRetrieved;
+            }
+
+            function clientVerifySign(ecSignature) {
+                if (ecSignature == null)
+                    return false;
+
+                if (!isValidSignature(ecSignature)) {
+                    return false;
+                }
+                return true;
+            }
+
+            
+            instanceDexContract.getOrderHash(_sellerTokens, _buyerTokens, _sellerValues, _buyerValues, _orderAddresses, _orderValues, function (err, result) {
+                orderHash = result;
+
+                var payload = {
+                    jsonrpc: "2.0",
+                    method: "eth_sign",
+                    params: [web3.eth.coinbase, orderHash]
+                };
+                web3.currentProvider.sendAsync(payload, function (err, result) {
+                    signature = result.result;
+                    ecSignature = extractECSignature(signature);
+                    console.log(orderHash);
+                    console.log(signature);
+                    console.log(ecSignature); 
+                    if (clientVerifySign(ecSignature)) {
+                        console.log("Client Verified Valid Signature!!!");
+                        instanceDexContract.isOrderSigned(orderHash, ecSignature.v, ecSignature.r, ecSignature.s, web3.eth.coinbase, function (err, result) {
+                            if (result) {
+                                console.log("Contract Verified Valid Signature!!!"); 
+
+                                instanceDexContract.fulfillPO.estimateGas(_sellerTokens, _buyerTokens, _sellerValues, _buyerValues, _orderAddresses, _orderValues, ecSignature.v, ecSignature.r, ecSignature.s,orderHash, function (err, result) {
+                                    var estimatedGas = result;
+                                    console.log(estimatedGas); console.log(orderHash);
+                                    instanceDexContract.fulfillPO(_sellerTokens, _buyerTokens, _sellerValues, _buyerValues, _orderAddresses, _orderValues, ecSignature.v, ecSignature.r, ecSignature.s, orderHash,
+                                     { from: web3.eth.coinbase, gas: estimatedGas }, function (err, result) {
+                                         console.log(result);
+                                     });
+
+                                });
+
+
+
+                            } else {
+                                console.log("Contract failed to Validate Signature!!!");
+                            }
+                        });
+                    }
+                    else {
+                        console.log("Invalid Signature!!!");
+                    }
+                });
+            });
+
+            //Angular
+            var app = angular.module("DexTester", []);
+            app.controller("DexController", function ($scope, $window) {
+
+            });
+    </script>
+    <div ng-controller="DexController">
+        <h2>The Dex Tester</h2>
+    </div>
+</body>
+</html>
