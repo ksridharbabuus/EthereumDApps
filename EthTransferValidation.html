@@ -1,0 +1,39 @@
+<!<!DOCTYPE html>
+<html>
+<head>
+    <script src="./scripts/angularv1.6.4.min.js"></script>
+
+    <script src="./scripts/ethereumjs-util.js"></script>
+    <script src="./scripts/ethereumjs-ABI.js"></script>
+    <script src="./scripts/bignumber.js"></script>
+    <script src="./scripts/bn.js"></script> 
+    <script src="scripts/underscore-min.js"></script>
+</head>
+<!-- defining angular app -->
+<body ng-app="DexTester">
+    <script>
+
+            web3 = new Web3(web3.currentProvider);
+
+            var toAddress = "0x46EF7d49aaA68B29C227442BDbD18356415f8304";
+            var fromAddress = web3.eth.coinbase;
+
+            var amount = web3.toWei(0.01, "ether");
+
+            web3.eth.sendTransaction({from:fromAddress, to:toAddress, value: amount}, function(err, result)
+            {
+                console.log(result);
+            });
+
+
+            //Angular
+            var app = angular.module("DexTester", []);
+            app.controller("DexController", function ($scope, $window) {
+
+            });
+    </script>
+    <div ng-controller="DexController">
+        <h2>Ether Transfer Test to integrate with Appsfly Testing. This validate the concept of embeding Metamask calls into Appsfly...</h2>
+    </div>
+</body>
+</html>
