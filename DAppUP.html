@@ -133,6 +133,30 @@
                         });
                         */
 
+
+                        // ***********************************************************************
+                        // Get the User Balance from Escrow Contract
+                        // ***********************************************************************
+                        var escrowContract = web3.eth.contract(contract_abi);
+                        var instanceEscrowContract = escrowContract.at(contract_address);
+
+                        instanceEscrowContract.balances(user_Account, (error, balance) => {
+                            balance = balance.div(10**decimals);
+                            console.log("User token balance in the escrow : " + balance);
+                        });
+
+
+                        // ***********************************************************************
+                        // Deposit token to the Escrow
+                        // ***********************************************************************
+                        amount = 2.3; // Means 6 Tokens assuming number of decimals are 18
+                        amountInWei = new BigNumber(web3.toWei(amount, "ether" ) / (10 ** (18-decimals)));
+                        // UnComment the code for real execution 
+                        /*
+                        instanceEscrowContract.deposit(amountInWei, (error, txnHash) => { 
+                            console.log("TXN Has : " + txnHash);
+                        });
+                        */
                         console.log("At the End...");
 
                     }
