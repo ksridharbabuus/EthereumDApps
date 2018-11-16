@@ -13,12 +13,186 @@ function main() {
 	var web3 = new Web3(new Web3.providers.WebsocketProvider(web3Provider));
     
     web3.eth.net.getId((err, netId) => {
-        console.log(netId);
-        subscribeMPEEvents(web3);
+		console.log(netId);
+
+		// Subscribe to MPE Events
+		subscribeMPEEvents(web3);
+		
+		// Subscribe to Registry Events
+		subscribeRegistryEvents(web3);
+
     });
 
-
 }
+
+
+function subscribeRegistryEvents(web3)
+{
+	// Contract Address to check for the events.
+    var contractAddrForRegistry = "0x28c674ebe1ac14cf9e338aea1281483fd5d75060";  // Address from Ropsten Deployment
+
+    // Event Listeners will start from this block - Give the Contract Creation Blocknumber as Parameter instead of Zero
+    var startingBlock = 4428888;
+
+    // Specify the contract ABI
+    var abiRegistry = [{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"newMembers","type":"address[]"}],"name":"addOrganizationMembers","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"serviceName","type":"bytes32"},{"name":"tags","type":"bytes32[]"}],"name":"addTagsToServiceRegistration","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"repositoryName","type":"bytes32"},{"name":"tags","type":"bytes32[]"}],"name":"addTagsToTypeRepositoryRegistration","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"newOwner","type":"address"}],"name":"changeOrganizationOwner","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"members","type":"address[]"}],"name":"createOrganization","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"serviceName","type":"bytes32"},{"name":"metadataURI","type":"bytes"},{"name":"tags","type":"bytes32[]"}],"name":"createServiceRegistration","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"repositoryName","type":"bytes32"},{"name":"repositoryURI","type":"bytes"},{"name":"tags","type":"bytes32[]"}],"name":"createTypeRepositoryRegistration","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"}],"name":"deleteOrganization","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"serviceName","type":"bytes32"}],"name":"deleteServiceRegistration","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"repositoryName","type":"bytes32"}],"name":"deleteTypeRepositoryRegistration","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"existingMembers","type":"address[]"}],"name":"removeOrganizationMembers","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"serviceName","type":"bytes32"},{"name":"tags","type":"bytes32[]"}],"name":"removeTagsFromServiceRegistration","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"repositoryName","type":"bytes32"},{"name":"tags","type":"bytes32[]"}],"name":"removeTagsFromTypeRepositoryRegistration","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"serviceName","type":"bytes32"},{"name":"metadataURI","type":"bytes"}],"name":"updateServiceRegistration","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"repositoryName","type":"bytes32"},{"name":"repositoryURI","type":"bytes"}],"name":"updateTypeRepositoryRegistration","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"orgName","type":"bytes32"}],"name":"OrganizationCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"orgName","type":"bytes32"}],"name":"OrganizationModified","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"orgName","type":"bytes32"}],"name":"OrganizationDeleted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"orgName","type":"bytes32"},{"indexed":true,"name":"serviceName","type":"bytes32"},{"indexed":false,"name":"metadataURI","type":"bytes"}],"name":"ServiceCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"orgName","type":"bytes32"},{"indexed":true,"name":"serviceName","type":"bytes32"},{"indexed":false,"name":"metadataURI","type":"bytes"}],"name":"ServiceMetadataModified","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"orgName","type":"bytes32"},{"indexed":true,"name":"serviceName","type":"bytes32"}],"name":"ServiceTagsModified","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"orgName","type":"bytes32"},{"indexed":true,"name":"serviceName","type":"bytes32"}],"name":"ServiceDeleted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"orgName","type":"bytes32"},{"indexed":true,"name":"typeRepositoryName","type":"bytes32"}],"name":"TypeRepositoryCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"orgName","type":"bytes32"},{"indexed":true,"name":"typeRepositoryName","type":"bytes32"}],"name":"TypeRepositoryModified","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"orgName","type":"bytes32"},{"indexed":true,"name":"typeRepositoryName","type":"bytes32"}],"name":"TypeRepositoryDeleted","type":"event"},{"constant":true,"inputs":[{"name":"orgName","type":"bytes32"}],"name":"getOrganizationByName","outputs":[{"name":"found","type":"bool"},{"name":"name","type":"bytes32"},{"name":"owner","type":"address"},{"name":"members","type":"address[]"},{"name":"serviceNames","type":"bytes32[]"},{"name":"repositoryNames","type":"bytes32[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"serviceName","type":"bytes32"}],"name":"getServiceRegistrationByName","outputs":[{"name":"found","type":"bool"},{"name":"name","type":"bytes32"},{"name":"metadataURI","type":"bytes"},{"name":"tags","type":"bytes32[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"orgName","type":"bytes32"},{"name":"repositoryName","type":"bytes32"}],"name":"getTypeRepositoryByName","outputs":[{"name":"found","type":"bool"},{"name":"name","type":"bytes32"},{"name":"repositoryURI","type":"bytes"},{"name":"tags","type":"bytes32[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"listOrganizations","outputs":[{"name":"orgNames","type":"bytes32[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"orgName","type":"bytes32"}],"name":"listServicesForOrganization","outputs":[{"name":"found","type":"bool"},{"name":"serviceNames","type":"bytes32[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"tag","type":"bytes32"}],"name":"listServicesForTag","outputs":[{"name":"orgNames","type":"bytes32[]"},{"name":"serviceNames","type":"bytes32[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"listServiceTags","outputs":[{"name":"tags","type":"bytes32[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"orgName","type":"bytes32"}],"name":"listTypeRepositoriesForOrganization","outputs":[{"name":"found","type":"bool"},{"name":"repositoryNames","type":"bytes32[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"tag","type":"bytes32"}],"name":"listTypeRepositoriesForTag","outputs":[{"name":"orgNames","type":"bytes32[]"},{"name":"repositoryNames","type":"bytes32[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"listTypeRepositoryTags","outputs":[{"name":"tags","type":"bytes32[]"}],"payable":false,"stateMutability":"view","type":"function"}]
+
+    // Create the contract instance from the given ABI & Contract Address
+    var instanceContractRegistry = new web3.eth.Contract(abiRegistry, contractAddrForRegistry);
+
+    // In case of specific events & filters
+    //var evt =instanceContractRegistry.ChannelOpen({sender: senderAddress}, {fromBlock: startingBlock, toBlock: 'latest'});
+
+	// Search the contract events for the hash in the event logs and show matching events.
+    
+    // For the Bug in Web3js Beta 36 - Fix to read events only when we have indexed parameters to events...
+    web3.eth.abi.decodeParameters = function(outputs, bytes) {
+        if (bytes === '0x') bytes = '0x00'
+        return web3.eth.abi.__proto__.decodeParameters(outputs, bytes)
+    }
+
+	var evt = instanceContractRegistry.events.allEvents({fromBlock: 4394767, toBlock: 'latest'}, function(err, result) {
+
+        //console.log(result);        
+		if (err) {
+			console.log("Error while watching for contract events => " + err); // Log the error in common log storage. May be need a notification
+		}
+		else {
+
+                var orgNameHex, serviceNameHex, typeRepoNameHex;
+                var orgName, serviceName, typeRepoName;
+
+                var event = result.event;
+                orgNameHex = result.returnValues.orgName;
+                orgName = web3.utils.hexToString(orgNameHex);
+
+                switch (event) {
+
+                    // Organization related Events
+                    case "OrganizationCreated":             // Intentianally not kept break as the following case to execute
+                    case "OrganizationModified":
+                        // CreateOrUpdate the Organization - OrgName and Members
+                        //console.log("event2: " + event + "->" + orgNameHex + "->" + orgName);
+
+                        // Get the Members for the given Org from BlockChain
+                        instanceContractRegistry.methods.getOrganizationByName(orgNameHex).call((err, result) => {
+                            if(err){
+                                console.log("Error in extracting the org details: " + orgName);
+                            }
+                            else {
+                                // console.log("Org Result...");
+                                // console.log(result);
+                                createOrUpdateOrg(orgName, result.members);
+                            }
+                        });
+                        
+                        break;
+                    case "OrganizationDeleted":
+
+                        // Delete the Organization including the heirarchy
+                        //console.log("event3: " + event);
+                        deleteOrg(orgName);
+
+                        break;
+
+                    // Service Related Events
+                    case "ServiceCreated":
+                    case "ServiceMetadataModified":
+                    case "ServiceTagsModified":
+
+                        // CreateOrUpdate the Service in the Orgnization
+
+                        serviceNameHex = result.returnValues.serviceName;
+                        serviceName = web3.utils.hexToString(serviceNameHex);
+                        metadataURI = result.returnValues.metadataURI;
+
+                        //console.log("event4: " + event + "->" + orgNameHex + "->" + orgName + "->" + serviceNameHex + "->" + serviceName);
+
+                        // Get the latest service data from Blockchain
+                        instanceContractRegistry.methods.getServiceRegistrationByName(orgNameHex, serviceNameHex).call((err, result) => {
+
+                            var tags = [];
+
+                            if(err) {
+                                console.log("Error in extracting the service details: " + orgName + "->" + serviceName)
+                            }
+                            else {
+                                //console.log(result);
+                                tags = result.tags;
+                                // Convert hex to string for every tag
+                                for(var i=0; i<tags.length; i++) {
+                                    tags[i] = web3.utils.hexToString(tags[i]);
+                                }
+
+                                createOrUpdateService(orgName, serviceName, metadataURI, tags);
+                                
+                            }
+
+                        });
+
+                        break;
+                    case "ServiceDeleted":
+                        // Delete the Service inside the Organization including the service heirarchy - Tags
+
+                        serviceNameHex = result.returnValues.serviceName;
+                        serviceName = web3.utils.hexToString(serviceNameHex);
+                        //console.log("event5: " + event + "->" + orgNameHex + "->" + orgName + "->" + serviceNameHex + "->" + serviceName);
+
+                        deleteService(orgName, serviceName);
+                        break;
+
+                    // Type Repo Related Events
+                    case "TypeRepositoryCreated":
+                    case "TypeRepositoryModified":
+                        // CreateOrUpdate the TypeRepo in the Orgnization
+                        typeRepoNameHex = result.returnValues.typeRepositoryName;
+                        typeRepoName = web3.utils.hexToString(typeRepoNameHex);
+                        repositoryURI = result.returnValues.repositoryURI;
+
+                        // Get the latest service data from Blockchain
+                        instanceContractRegistry.methods.getTypeRepositoryByName(orgNameHex, typeRepoNameHex).call((err, result) => {
+
+                            var tags = [];
+
+                            if(err) {
+                                console.log("Error in extracting the Type Repo details: " + orgName + "->" + typeRepoName)
+                            }
+                            else {
+                                //console.log(result);
+                                tags = result.tags;
+                                // Convert hex to string for every tag
+                                for(var i=0; i<tags.length; i++) {
+                                    tags[i] = web3.utils.hexToString(tags[i]);
+                                }
+
+                                createOrUpdateTypeRepo(orgName, typeRepoName, repositoryURI, tags);
+                                
+                            }
+
+                        });
+
+                        break;
+                    case "TypeRepositoryDelete":
+                        // Delete the Type Repo in the Organization including the heirarchy - Tags
+                        
+                        typeRepoNameHex = result.returnValues.typeRepositoryName;
+                        typeRepoName = web3.utils.hexToString(typeRepoNameHex);
+                        //console.log("event5: " + event + "->" + orgNameHex + "->" + orgName + "->" + typeRepoNameHex + "->" + typeRepoName);
+
+                        deleteTypeRepo(orgName, typeRepoName);
+                        break;
+
+                    default:
+                        // Do nothing
+
+                } // end switch
+
+        } //end else
+        
+	}); // End All Events Subscription
+
+} // End Fun
+
 
 function subscribeMPEEvents(web3) {
 
@@ -110,6 +284,47 @@ function createChannel(channelId, sender, recipient, groupId, value, nonce, expi
 function updateChannel(channelId, sender, recipient, groupId, value, nonce, expiration, signer) {
 	// Definitely it will be an update until unless there was an error with the createChannel
 
+}
+
+function createOrUpdateOrg(orgName, members) {
+    console.log("createOrUpdateOrg: " + orgName);
+    for(var i=0; i< members.length; i++)
+    {
+        console.log("Member -> " + members[i]);
+    }
+}
+
+function deleteOrg(orgName) {
+    console.log("deleteOrg: " + orgName);
+}
+
+function createOrUpdateService(orgName, serviceName, metadataURI, tags) {
+    console.log("createOrUpdateService: " + orgName + "-" + serviceName + "-" + metadataURI);
+    for(var i=0; i< tags.length; i++)
+    {
+        console.log("tags -> " + tags[i]);
+    }
+
+    // Get the IPFS Hash using metaDataURI
+
+}
+
+function deleteService(orgName, serviceName) {
+    console.log("deleteService: " + orgName + "-" + serviceName);
+}
+
+function createOrUpdateTypeRepo(orgName, typeRepoName, repositoryURI, tags) {
+    console.log("createOrUpdateTypeRepo: " + orgName + "-" + typeRepoName + "-" + repositoryURI);
+    for(var i=0; i< tags.length; i++)
+    {
+        console.log("tags -> " + tags[i]);
+    }
+
+    // Get the IPFS Hash using repositoryURI
+}
+
+function deleteTypeRepo(orgName, typeRepoName) {
+    console.log("deleteTypeRepo: " + orgName + "-" + typeRepoName);
 }
 
 // Call main function to initiate the call
