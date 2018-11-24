@@ -1,13 +1,13 @@
 <!<!DOCTYPE html>
 <html>
 <head>
-    <script src="./scripts/angularv1.6.4.min.js"></script>
+    <script src="/js/scripts//angularv1.6.4.min.js"></script>
 
-    <script src="./scripts/ethereumjs-util.js"></script>
-    <script src="./scripts/ethereumjs-ABI.js"></script>
-    <script src="./scripts/bignumber.js"></script>
-    <script src="./scripts/bn.js"></script> 
-    <script src="./scripts/underscore-min.js"></script>
+    <script src="/js/scripts/ethereumjs-util.js"></script>
+    <script src="/js/scripts/ethereumjs-ABI.js"></script>
+    <script src="/js//scripts/bignumber.js"></script>
+    <script src="/js/scripts/bn.js"></script> 
+    <script src="/js/scripts/underscore-min.js"></script>
 </head>
 <!-- defining angular app -->
 <body ng-app="UserProfileTester">
@@ -22,15 +22,12 @@
                     // window.web3 == web3 most of the time. Don't override the provided,
                     // web3, just wrap it in your Web3.
                     myWeb3 = new Web3(window.web3.currentProvider); 
-
                     // the default account doesn't seem to be persisted, copy it to our
                     // new instance
                     myWeb3.eth.defaultAccount = window.web3.eth.defaultAccount;
-
                     callback(myWeb3);
                 }
             }
-
             window.addEventListener('load', function() {
                 getWeb3(startApp);
             });
@@ -54,28 +51,19 @@
                         default:
                         console.log('This is an unknown network.');
                     }
-
                     console.log("Network Id: " + netId);
                     console.log("Account Id: " + web3.eth.coinbase);
-
-
                     // Sample Code for Signing a Message using Meta Mask
                     /*
                     var msg = web3.sha3("Hello String go here...");
-
                     web3.eth.sign(web3.eth.coinbase, msg, function (err, res) { 
                         console.log(res);
                     });//hexEncodedUtf8Message
-
                     web3.personal.sign(web3.toHex("You are logging in using metamask authentication..."),web3.eth.coinbase, (err,res) => console.log(res))
                     */
-
-
                     if(netId == 3) // For Ropsten Network
                     {
                         // Continue with the App Functionality
-
-
                         var token_address = "0xc8f0c992660666b64596c452fc0e7e6b07a448c2"; //"0x24e1128b757c02c62ed7987b2518a6d251aa34e3";
                         var token_abi = [ { "constant" : true, "inputs" : [  ], "name" : "name", "outputs" : [ { "name" : "", "type" : "string" } ], "payable" : false, "type" : "function" }, { "constant" : false, "inputs" : [ { "name" : "_spender", "type" : "address" }, { "name" : "_value", "type" : "uint256" } ], "name" : "approve", "outputs" : [ { "name" : "success", "type" : "bool" } ], "payable" : false, "type" : "function" }, { "constant" : true, "inputs" : [  ], "name" : "totalSupply", "outputs" : [ { "name" : "", "type" : "uint256" } ], "payable" : false, "type" : "function" }, { "constant" : false, "inputs" : [ { "name" : "_account", "type" : "address" }, { "name" : "_spender", "type" : "address" }, { "name" : "_value", "type" : "uint256" } ], "name" : "approveProxy", "outputs" : [ { "name" : "success", "type" : "bool" } ], "payable" : false, "type" : "function" }, { "constant" : false, "inputs" : [ { "name" : "_from", "type" : "address" }, { "name" : "_to", "type" : "address" }, { "name" : "_value", "type" : "uint256" } ], "name" : "transferFrom", "outputs" : [ { "name" : "success", "type" : "bool" } ], "payable" : false, "type" : "function" }, { "constant" : true, "inputs" : [  ], "name" : "decimals", "outputs" : [ { "name" : "", "type" : "uint8" } ], "payable" : false, "type" : "function" }, { "constant" : true, "inputs" : [  ], "name" : "version", "outputs" : [ { "name" : "", "type" : "string" } ], "payable" : false, "type" : "function" }, { "constant" : true, "inputs" : [ { "name" : "_owner", "type" : "address" } ], "name" : "balanceOf", "outputs" : [ { "name" : "balance", "type" : "uint256" } ], "payable" : false, "type" : "function" }, { "constant" : true, "inputs" : [  ], "name" : "symbol", "outputs" : [ { "name" : "", "type" : "string" } ], "payable" : false, "type" : "function" }, { "constant" : false, "inputs" : [ { "name" : "_to", "type" : "address" }, { "name" : "_value", "type" : "uint256" } ], "name" : "transfer", "outputs" : [ { "name" : "success", "type" : "bool" } ], "payable" : false, "type" : "function" }, { "constant" : false, "inputs" : [ { "name" : "_spender", "type" : "address" }, { "name" : "_value", "type" : "uint256" }, { "name" : "_extraData", "type" : "bytes" } ], "name" : "approveAndCall", "outputs" : [ { "name" : "success", "type" : "bool" } ], "payable" : false, "type" : "function" }, { "constant" : true, "inputs" : [ { "name" : "_owner", "type" : "address" }, { "name" : "_spender", "type" : "address" } ], "name" : "allowance", "outputs" : [ { "name" : "remaining", "type" : "uint256" } ], "payable" : false, "type" : "function" }, { "inputs" : [  ], "payable" : false, "type" : "constructor" }, { "anonymous" : false, "inputs" : [ { "indexed" : true, "name" : "_from", "type" : "address" }, { "indexed" : true, "name" : "_to", "type" : "address" }, { "indexed" : false, "name" : "_value", "type" : "uint256" } ], "name" : "Transfer", "type" : "event" }, { "anonymous" : false, "inputs" : [ { "indexed" : true, "name" : "_owner", "type" : "address" }, { "indexed" : true, "name" : "_spender", "type" : "address" }, { "indexed" : false, "name" : "_value", "type" : "uint256" } ], "name" : "Approval", "type" : "event" } ];
                         var decimals = 18; // Default is 18   // We need to update this to 8 Decimals in actual code as per AGI
@@ -84,19 +72,15 @@
                         var contract_address = "0xd352940c3e18407ab23a288aface4e7e82196a0c";
                         //MPE Contract ABI
                         var contract_abi = [{"constant":false,"inputs":[{"name":"channelId","type":"uint256"},{"name":"amount","type":"uint256"}],"name":"channelAddFunds","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"channelId","type":"uint256"},{"name":"amount","type":"uint256"},{"name":"signature","type":"bytes"},{"name":"isSendback","type":"bool"}],"name":"channelClaim","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"channelId","type":"uint256"}],"name":"channelClaimTimeout","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"channelId","type":"uint256"},{"name":"newExpiration","type":"uint256"}],"name":"channelExtend","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"channelId","type":"uint256"},{"name":"newExpiration","type":"uint256"},{"name":"amount","type":"uint256"}],"name":"channelExtendAndAddFunds","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"value","type":"uint256"}],"name":"deposit","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"recipient","type":"address"},{"name":"value","type":"uint256"},{"name":"expiration","type":"uint256"},{"name":"replicaId","type":"uint256"}],"name":"depositAndOpenChannel","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"channelId","type":"uint256"},{"indexed":true,"name":"sender","type":"address"},{"indexed":true,"name":"recipient","type":"address"},{"indexed":true,"name":"replicaId","type":"uint256"}],"name":"EventChannelOpen","type":"event"},{"constant":false,"inputs":[{"name":"recipient","type":"address"},{"name":"value","type":"uint256"},{"name":"expiration","type":"uint256"},{"name":"replicaId","type":"uint256"}],"name":"openChannel","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"value","type":"uint256"}],"name":"withdraw","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_token","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balances","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"channels","outputs":[{"name":"sender","type":"address"},{"name":"recipient","type":"address"},{"name":"replicaId","type":"uint256"},{"name":"value","type":"uint256"},{"name":"nonce","type":"uint256"},{"name":"expiration","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"nextChannelId","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"token","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"}];
-
                         var token_instance;
                         var contract_instance;
-
                         // Current logged Account in Meta Mask
                         var user_Account = web3.eth.coinbase;
-
                         // *************************************
                         // Sample Code to get the Token Balance
                         // *************************************
                         var tokenContract = web3.eth.contract(token_abi);
                         var instanceTokenContract = tokenContract.at(token_address);
-
                         // Call balanceOf function
                         instanceTokenContract.balanceOf(user_Account, (error, balance) => {
                         // Get decimals - In case if we know the decimals we can go with the hard coded value as well
@@ -107,8 +91,6 @@
                             console.log("Balance for the given token address is: " + balance.toString());
                         });
                         });
-
-
                         // *********************************************************************************************************************
                         // Sample Code to get the allowance for Contract Address on a Token for Meta Mask User Account
                         // *********************************************************************************************************************
@@ -119,8 +101,6 @@
                             if(allowance > 0) allowance = allowance.div(10**decimals);
                             console.log("Allowed allowances for the contract address on the token approved by the user: " + allowance);
                         });
-
-
                         // *********************************************************************************************************************
                         // Sample Code to get the allowance for Contract Address on a Token for Meta Mask User Account
                         // *********************************************************************************************************************
@@ -132,46 +112,31 @@
                             console.log("Txn Hash for approved transaction is : " + txnHash);
                         });
                         */
-
-
                         // ***********************************************************************
                         // Get the User Balance from Escrow Contract
                         // ***********************************************************************
                         var escrowContract = web3.eth.contract(contract_abi);
                         var instanceEscrowContract = escrowContract.at(contract_address);
-
                         instanceEscrowContract.balances(user_Account, (error, balance) => {
                             balance = balance.div(10**decimals);
                             console.log("User token balance in the escrow : " + balance);
                         });
-
-
                         // ***********************************************************************
                         // Deposit token to the Escrow
                         // ***********************************************************************
-                        amount = 2.3; // Means 6 Tokens assuming number of decimals are 18
+                        amount = 0.3; // Means 6 Tokens assuming number of decimals are 18
                         amountInWei = new BigNumber(web3.toWei(amount, "ether" ) / (10 ** (18-decimals)));
                         // UnComment the code for real execution 
-                        /*
-                        instanceEscrowContract.deposit(amountInWei, (error, txnHash) => { 
+                        
+                        instanceEscrowContract.deposit(amountInWei, { gas: 200000, gasPrice: web3.toWei(23, 'gwei') }, (error, txnHash) => { 
                             console.log("TXN Has : " + txnHash);
                         });
-                        */
+                        
                         console.log("At the End...");
-
                     }
-
-
-
-
-
-
                 });
-
                 
-
             }
-
     </script>
     <div ng-controller="DexController">
         <h2>The Dex Tester</h2>
