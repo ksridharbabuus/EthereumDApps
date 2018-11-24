@@ -53,6 +53,14 @@
                     }
                     console.log("Network Id: " + netId);
                     console.log("Account Id: " + web3.eth.coinbase);
+
+                    if(netId == 1) {
+                        web3.eth.getGasPrice((err, gasPrice) => {
+                            console.log("Gas Price : " + gasPrice);
+                        });
+                        return;
+                    }
+
                     // Sample Code for Signing a Message using Meta Mask
                     /*
                     var msg = web3.sha3("Hello String go here...");
@@ -128,12 +136,19 @@
                         amountInWei = new BigNumber(web3.toWei(amount, "ether" ) / (10 ** (18-decimals)));
                         // UnComment the code for real execution 
                         
-                        
+                        // Getting the Gas Price
+                        var gasPrice;
+                        web3.eth.getGasPrice((err, price) => {
+                            console.log("Gas Price : " + price);
+                            gasPrice = price;
+                        })
+
+                        // Getting the Estimated Gas Price & Executing the transaction
                         instanceEscrowContract.deposit.estimateGas(amountInWei, (err, estimatedGas) => {
 
                             console.log("Estimated Gas Limit: " + estimatedGas);
-
-                            instanceEscrowContract.deposit(amountInWei, { gas: estimatedGas, gasPrice: web3.toWei(23, 'gwei') }, (error, txnHash) => { 
+                            //gasPrice: web3.toWei(23, 'gwei') // For hardcoded to 23 Gas Price as most of the time gas Price is low
+                            instanceEscrowContract.deposit(amountInWei, { gas: estimatedGas, gasPrice }, (error, txnHash) => { 
                                 console.log("TXN Has : " + txnHash);
                             });
                         });
